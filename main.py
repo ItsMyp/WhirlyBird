@@ -39,7 +39,7 @@ finish = False
 clock = time.Clock()
 FPS = 60
 
-plyer = Player('racket.png', 30, 200, 4, 50, 150) 
+player = Player('racket.png', 30, 200, 4, 50, 150) 
 Platform = GameSprite('racket.png', 520, 200, 4, 50, 150)
 Spike = GameSprite('tenis_ball.png', 200, 200, 4, 50, 50)
 
