@@ -1,122 +1,120 @@
 from pygame import *
 
-# клас-батько для спрайтів
+init()
+back = (200, 255, 255)
+win_width = 800
+win_height = 600
+window = display.set_mode((win_width, win_height))
+player_l = [image.load('PlayerL1.png'), image.load('PlayerL2.png'), image.load('PlayerL3.png')]
+player_r = [image.load('PlayerR1.png'), image.load('PlayerR2.png'), image.load('PlayerR3.png')]
+
 class GameSprite(sprite.Sprite):
-    #конструктор класу
-    def __init__(self, player_image, player_x, player_y, player_speed, wight, height):
-        super().__init__()
-        # кожен спрайт повинен зберігати властивість image - зображення
-        self.image = transform.scale(image.load(player_image), (wight, height)) #разом 55,55 - параметри
+    def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
+        sprite.Sprite.__init__(self)
+        self.image = transform.scale(image.load(player_image), (size_x, size_y))
         self.speed = player_speed
-        # кожен спрайт повинен зберігати властивість rect - прямокутник, в який він вписаний
         self.rect = self.image.get_rect()
         self.rect.x = player_x
         self.rect.y = player_y
-    
+        self.left=False
+        self.right= False
+        self.count = 0
+        
+
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
-# клас-спадкоємець для спрайту-гравця (керується стрілками)    
 class Player(GameSprite):
+
     def update(self):
         keys = key.get_pressed()
-        if keys[K_LEFT] and self.rect.y > 5:
+
+        if keys[K_LEFT] :
             self.rect.x -= self.speed
-        if keys[K_RIGHT] and self.rect.y < win_height - 80:
+            self.left = True
+            self.right = False
+
+        elif keys[K_RIGHT] :
+            self.left = False
+            self.right = True
             self.rect.x += self.speed
+        else:
+            self.right = self.left = False
+            
+    def animation(self):
+        if self.left:
+            self.count = (self.count + 1) % len(player_l)  
+            window.blit(player_l[self.count], (self.rect.x, self.rect.y))
+        elif self.right:
+            self.count = (self.count + 1) % len(player_l)  
+            window.blit(player_r[self.count], (self.rect.x, self.rect.y))
+        else:
+            self.count=0
+            window.blit(player_r[self.count], (self.rect.x, self.rect.y))
 
-#ігрова сцена:
-back = (200, 255, 255)  #колір фону (background)
-win_width = 600
-win_height = 500
 
-window = display.set_mode((win_width, win_height))
-window.fill(back)
- 
-#прапорці, що відповідають за стан гри
-game = True
-finish = False
+
+
+
+FPS = 40
+bg = transform.scale(image.load("bg.png"), (win_width, win_height))
+display.set_caption("WhirlyBird")
+
 clock = time.Clock()
-FPS = 60
 
-Playerr = Player('racket.png', 30, 200, 4, 50, 150) 
-Platform = GameSprite('racket.png', 520, 200, 4, 50, 150)
-Spike = GameSprite('spikes.png', 200, 200, 4, 50, 50)
+game= False
+menu = True
 
-mixer.init() 
-fire = mixer.Sound(".ogg")
-fire.set_volume(0.1)
+platform_img = 'platform.png' 
+spikes_img = 'spikes.png'
 
-font.init()
-font = font.Font(None, 35)
-lose = font.render('YOU LOSE', True, (180, 0, 0))
-#the variable game is over 
- 
-finish = False 
- 
- 
-#main game cycle
-run = True 
+font.init() 
+font3 = font.Font(None, 36)
+font2 = font.Font(None, 36) 
+font1 = font.Font(None,100)
 
-while run: 
- 
-    #the event of clicking on the close button 
-     
-    for e in event.get(): 
-        if e.type == QUIT: 
-            run = False 
-            #the event of clicking to space - sprite is shooting
-        elif e.type == KEYDOWN:
-            if e.key == K_LEFT:
+def game_menu():
+    pass
 
-            elif e.key == K_RIGHT:
-                #M
+def level_1():
+    pass
 
+def level_2():
+    pass
 
-    if not finish: 
- 
-        window.blit((0, 0)) 
-         
-        #writing text on screen 
- 
-        lose = font.render("Рахунок:" + str(score), 1, (255, 255, 255)) 
-        window.blit(lose, (10, 20)) 
- 
-        #sprites moves
- 
-        Playerr.update() 
-        Platform.update() 
-        Spike.update()
-         
-        Platform.draw(window) 
-        Spike.draw(window)
+running = True
+player = Player('PlayerR1.png', 5, 300, 85, 100, 10)
+x_bg = 0
+y_bg=0
+while running:
+    for e in event.get():
+        if e.type == QUIT:
+            running = False
+        elif  e.type==KEYDOWN :
+            game = True
+            menu = False
+        elif e.type == K_SPACE:
+            game = False
+            menu = True
+            
 
-        if sprite.spritecollide(rocket, monsters, False):
-            finish = True
-            window.blit(lose, [200, 200])
- 
-        collides = sprite.groupcollide(Platform, Spike, True, True)
-        for c in collides:
-
-            score += 1
-
-        if score >= 100:
-            finish = True
-            window.blit(txt_win_game, [200, 200])
-
-        if lost == 3:
-            finish = True
-            window.blit(txt_lose_game, [200, 200])
-
-        display.update() 
-    
-    else:
-        score = 0
-        lost = 0
-        finish = False
+    if game:
+        window.fill(back)
+        window.blit(bg, (y_bg, y_bg))
+        window.blit(bg, (y_bg+win_width, y_bg))
+        y_bg=4
         
-        time.delay(3000)
-        for i in range(1, 6): 
+        player.update()
+        player.animation()
 
+        if y_bg == win_width:
+            y_bg=0
+    if menu:
+        text = font2.render("WhirlyBird", 1, (255, 255, 255))
+        window.blit(text, (325, 77))
 
-    time.delay(50)
+        playerintro = Player('PlayerIntro.png', 5, 300, 85, 100, 10)
+        
+    display.update()
+
+    time.delay(FPS)
