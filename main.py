@@ -53,7 +53,7 @@ class Player(GameSprite):
             self.count = (self.count + 1) % len(player_l)  
             window.blit(player_r[self.count], (self.rect.x, self.rect.y))
 
-class Enemy(GameSprite): 
+class Platformers(GameSprite): 
     def update(self): 
         self.rect.y += self.speed 
         global lost
@@ -83,12 +83,18 @@ font3 = font.Font(None, 36)
 font2 = font.Font(None, 36) 
 font1 = font.Font(None,100)
 
-platform = sprite.Group() 
-spike = sprite.Group() 
+platforms = sprite.Group()
+for i in range(1, 6): 
+    platform = Platformers(platform_img, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+    platforms.add(platform)
+
+spikes = sprite.Group() 
+
+txt_lose_game = font1.render('YOU LOSE', True, [255, 0, 0])
 
 jumping = False
 running = True
-player = Player('PlayerR1.png', 5, 300, 85, 100, 10)
+player = Player('PlayerR1.png', 300, 300, 100, 100, 10)
 x_bg = 0
 y_bg=0
 jump_count=10
@@ -114,16 +120,23 @@ while running:
         y_bg=4
         
         text = font2.render("Рахунок:" + str(score), 1, (255, 255, 255)) 
-        window.blit(text, (10, 20))
+        window.blit(text, (100, 200))
+
+    
 
         player.update()
         player.animation()
 
         platforms = transform.scale(image.load("platform.png"), (100, 10))
-        window.blit(platforms, (350, 300))
+        window.blit(platforms, (300, 420))
 
         spikes = transform.scale(image.load("spikes.png"), (100, 33))
         window.blit(spikes, (100, 300))
+        
+#        if not sprite.spritecollide(player, platforms, True):
+#            player.rect.y -=3
+            
+
 
         if y_bg == win_width:
             y_bg=0
@@ -149,8 +162,6 @@ while running:
         window.blit(text, (325, 77))
         playerintro = transform.scale(image.load("PlayerIntro.png"), (80, 95))
         window.blit(playerintro, (350, 300))
-    
-   
 
     display.update()
 
