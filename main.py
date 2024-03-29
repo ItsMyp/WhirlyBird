@@ -81,15 +81,16 @@ spikes_img = 'spikes.png'
 score = 0
 
 font.init() 
+font4 = font.Font(None, 36)
 font3 = font.Font(None, 36)
 font2 = font.Font(None, 36) 
 font1 = font.Font(None,100)
 
 
 
-jumping = True
+jumping =   True
 running = True
-player = Player('PlayerR1.png', 300, 300, 100, 100, 10)
+player = Player('PlayerR1.png', 235, 700, 100, 100, 10)
 x_bg = 0
 y_bg=0
 jump_count=10
@@ -97,13 +98,10 @@ jump_height=10
 
 
 platforms = sprite.Group()
-platforms.add(Platform(platform_img,140,140,120,20,20))#1
-platforms.add(Platform(platform_img,300, 300,120,20,20))#2
-platforms.add(Platform(platform_img,100,win_height - 150,120,20,20))#3
-
-spikes = sprite.Group()
-
-spikes.add(Platform(spikes_img,200, win_height,120,50,20))#4
+platforms.add(Platform(platform_img,400,win_height - 0,120,20,5))#1
+platforms.add(Platform(platform_img,300,win_height - 200,120,20,5))#2
+platforms.add(Platform(platform_img,200,win_height - 400,120,20,5))#3
+platforms.add(Platform(platform_img,100,win_height - 600,120,20,5))#4
 
 
 
@@ -119,7 +117,8 @@ while running:
         elif e.type == K_SPACE:
             game = False
             menu = True
-            
+        
+    
 
     if game:
         window.fill(back)
@@ -127,12 +126,12 @@ while running:
         window.blit(bg, (y_bg+win_width, y_bg))
         platforms.draw(window)
         platforms.update()
-        spikes.draw(window)
-        spikes.update()
+        #spikes.draw(window)
+        #spikes.update()
         y_bg=4
         
-        text = font2.render("Рахунок:" + str(score), 1, (0, 0, 0)) 
-        window.blit(text, (10, 20))
+#        text = font2.render("Рахунок:" + str(score), 1, (0, 0, 0)) 
+#        window.blit(text, (10, 20))
         player.update()
         player.animation()
         
@@ -140,11 +139,11 @@ while running:
 #        if not sprite.spritecollide(player, platforms, True):
 #            player.rect.y -=3
 
-        hits_lose = sprite.spritecollide(player,spikes,False)
-        if hits_lose:
-            text_lose = font2.render('YOU LOSE', True, [255, 0, 0])
-            window.blit(text_lose, (100, 200))
-            # game = False
+#        hits_lose = sprite.spritecollide(player,spikes,False)
+#        if hits_lose:
+#            text_lose = font2.render('YOU LOSE', True, [255, 0, 0])
+#            window.blit(text_lose, (350, 250))
+#            game = False
         
         hits = sprite.spritecollide(player,platforms,False)
         for platform in hits:
@@ -169,7 +168,9 @@ while running:
             player.rect.bottom +=5 
         if player.rect.y > win_height:
             text_lose = font2.render('YOU LOSE', True, [255, 0, 0])
-            window.blit(text_lose, (100, 200))
+            window.blit(text_lose, (235, 250))
+            game = False
+
             
 
         if y_bg == win_width:
@@ -193,7 +194,7 @@ while running:
         window.blit(bg, (y_bg, y_bg))
         window.blit(bg, (y_bg+win_width, y_bg))
         text = font2.render("WhirlyBird", 1, (0, 0, 0))
-        window.blit(text, (235, 250))
+        window.blit(text, (235, 200))
         playerintro = transform.scale(image.load("PlayerIntro.png"), (80, 95))
         window.blit(playerintro, (260, 350))
 
